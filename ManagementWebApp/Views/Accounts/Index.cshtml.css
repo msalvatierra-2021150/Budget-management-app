@@ -1,0 +1,25 @@
+﻿.activo {
+    color: green;
+}
+
+.passive {
+    color: red;
+}
+
+.total {
+    color: mediumblue;
+}
+
+    .activo p,
+    .passive p,
+    .total p {
+        font-size: 26px;
+    }
+
+.fc-black {
+    color: black
+}
+
+.accordion-header button {
+    font-size: 20px;
+}

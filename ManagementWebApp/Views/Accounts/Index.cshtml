@@ -1,0 +1,82 @@
+﻿@model IEnumerable<IndexAccountsViewModel>
+@{
+    ViewData["Title"] = "Accounts";
+
+    string BalanceFormater (decimal balance)
+    {
+        return Math.Abs(balance).ToString("N");
+    }
+
+    string getStyleForBalance(decimal balance){
+        if (balance > 0)
+        {
+            return "activo";
+        }
+        return "passive";
+    }
+}
+
+<section>
+    <h1 class="mb-3">Accounts</h1>
+    <a asp-action="Create" class="btn btn-primary mb-3">Create New Account</a>
+</section>
+<div class="container">
+    <section class="container d-flex justify-content-around">
+        <div class="activo">
+            <p class="fw-bold fc-black">Actives</p>
+            <p>@BalanceFormater(@Model.Where(account => account.Balance > 0).Sum(account => account.Balance))</p>
+        </div>
+        <div class="passive">
+            <p class="fw-bold fc-black">Passives</p>
+            <p>@BalanceFormater(@Model.Where(account => account.Balance < 0).Sum(account => account.Balance))</p>
+        </div>
+        <div class="total">
+           <p class="fw-bold fc-black">Total</p>
+           <p>@BalanceFormater(@Model.Sum(account => account.Balance))</p>
+        </div>
+    </section>
+    <!--End of Balances-->
+    <section class="my-4">
+        <div class="accordion" id="accordionExample">
+        @foreach(var AccountType in Model)
+        {
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        @{
+                            var id = AccountType.AccountType.Replace(" ", "");
+                            var dataBsTarget = "#" + id;
+                            var styleClassAccountType = getStyleForBalance(AccountType.Balance);
+                        }
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="@dataBsTarget" aria-expanded="false" aria-controls="collapseThree">
+                            <span class="d-flex justify-content-between w-100">
+                                <strong>@AccountType.AccountType</strong>
+                                <span class="@styleClassAccountType">@BalanceFormater(@AccountType.Balance)</span>
+                            </span>
+                        </button>
+                    </h2>
+                <div id="@id" class="accordion-collapse collapse" >
+                    <div>
+                        @foreach (var Account in AccountType.Accounts)
+                        {
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between w-100">
+                                    <span class="d-flex">
+                                            <p class="fw-bold me-2">@Account.Name</p>
+                                            <a class="btn btn-warning me-2" asp-action="Edit" asp-route-id="@Account.Id">
+                                                <i class="bi-pencil-fill"></i>
+                                            </a>                                            
+                                            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Account.Id">
+                                                <i class="bi-trash-fill"></i>
+                                            </a>
+                                    </span>
+                                    <p class="@styleClassAccountType">@BalanceFormater(Account.Balance)</p>
+                                </li>
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </section>
+</div>
